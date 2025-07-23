@@ -23,4 +23,30 @@ p{
 
 .username{
   margin-top: 230%;
+}/* Login.css */
+
+.login-container {
+  margin-top: 120px !important;
+  padding: 32px !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 16px !important;
+  text-align: center !important;
+  background-color: white !important;
+}
+
+.login-button {
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+  background-color: #4665c1 !important;
+  color: white !important;
+} 
+
+.google-button {
+  margin-top: 16px !important;
+}
+
+.toggle-button {
+  text-transform: none !important;
+  padding: 0 !important;
+  min-width: auto !important;
 }

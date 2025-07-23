@@ -68,9 +68,31 @@ export const signIn = async (req, res) => {
 
 export const getUser = async (req, res) => {
     try {
-        const user = await Auth.find();
-        res.status(200).json({ message: 'User fetched successfully', user });
+        const users = await Auth.find();
+        const usersWithoutPassword = users.map(user => {
+            const { password, ...userInfo } = user.toObject();
+            return userInfo;
+        });
+        res.status(200).json({ message: 'Users fetched successfully', users: usersWithoutPassword });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching user', error: error.message });
     }
 };
+
+
+export const updateUsersBulk = async (req, res) => {
+    const { users } = req.body;
+    try {
+        const updatedUsers = await Promise.all(users.map(async (user) => {
+            const existingUser = await Auth.findById(user._id);
+            if (!existingUser) {
+                throw new Error(`User with ID ${user._id} not found`);
+            }
+            existingUser.role = user.role;
+            return existingUser.save();
+        }));
+        res.status(200).json({ message: 'Users updated successfully', users: updatedUsers });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating users', error: error.message });
+    }
+}

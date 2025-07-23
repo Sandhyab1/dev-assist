@@ -11,9 +11,9 @@ const authSchema = new mongoose.Schema({
     required: true,
   },
   role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
+    type: [String],
+    enum: ["user", "admin", "moderator"],
+    default: ["user"],
   },
   authProvider: {
     type: String,
