@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import { fetchUsers, updateUsersBulk } from '../../../apis/api';
+import { fetchUsers } from '../../../apis/api';
 import { Button } from '@mui/material';
 
 const columns = [
@@ -73,20 +73,6 @@ function ManagerUsers() {
         return user;
       })
     );
-  };
-
-  const handleSaveChanges = () => {
-    const updatedUsers = users.map(user => ({
-      _id: user._id,
-      role: user.role || []
-    }));
-    updateUsersBulk({ users: updatedUsers })
-      .then(response => {
-        console.log("Users updated successfully:", response.data);
-      })
-      .catch(error => {
-        console.error("Error updating users:", error);
-      });
   };
 
   useEffect(() => {
@@ -172,7 +158,7 @@ function ManagerUsers() {
           justifyContent: 'right',
         }}
       >
-        <Button variant="contained" color="primary" onClick={() => handleSaveChanges()}>
+        <Button variant="contained" color="primary">
           Save Changes
         </Button>
       </Paper>

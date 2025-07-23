@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Paper, Typography, Box, Tabs, Tab } from "@mui/material";
 import "./Manager.css";
-import ManagerUserRoles from "./ManagerUserRoles";
+import ManagerUsers from "./ManagerUsers";
 import ManageForums from "./ManageForums";
 import ManageResearches from "./ManageResearches";
 
@@ -15,7 +15,7 @@ function Manager() {
   const getTabContent = (value) => {
     switch (value) {
       case 0:
-        return <ManagerUserRoles />;
+        return <ManagerUsers />;
       case 1:
         return <ManageForums />;
       case 2:

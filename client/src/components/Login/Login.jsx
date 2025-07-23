@@ -3,34 +3,14 @@ import Stack from "@mui/material/Stack";
 import LockIcon from "@mui/icons-material/Lock";
 import axios from "./axiosInstance";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./Login.css";
-import { deepOrange, orange } from "@mui/material/colors";
-import GoogleIcon from "@mui/icons-material/Google";
-import { auth, provider } from "../../firebase/firebase.js";
-import { signInWithPopup } from "firebase/auth";
 
-export function Login() {
+export function Login({ setUser }) {
   const navigate = useNavigate();
 
   const [signup, setSignup] = useState(false);
   const [formData, setFormData] = useState({ username: "", password: "" });
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      console.log("Google Sign-In successful!", user);
-
-      // Optional: Redirect or store user info
-    } catch (error) {
-      console.error("Google Sign-In failed:", error.message);
-    }
-  };
-
-  function handleSignup() {
-    setSignup(!signup);
-  }
 
   function handleSwitch() {
     setSignup(!signup);
@@ -39,15 +19,33 @@ export function Login() {
 
   const handleform = async (e) => {
     e.preventDefault();
+    if (formData.username === "" || formData.password === "") {
+      alert("Please fill in all fields");
+      return;
+    }
     try {
       const res = signup
-        ? await axios.post("/signin", formData)
-        : await axios.post("/signup", formData);
-      localStorage.setItem("token", res.data.token);
-      navigate("/Header");
+        ? await axios.post("/signup", formData)
+        : await axios.post("/signin", formData);
+      
+      // Store user token
+      const userToken = res.data.token;
+      localStorage.setItem("user", userToken);
+      
+      // Update app state
+      if (setUser) {
+        setUser(userToken);
+      }
+      
+      // Dispatch custom event for App.jsx to detect
+      window.dispatchEvent(new Event('user-login'));
+      
+      // Navigate to home page
+      navigate("/");
       console.log(res);
     } catch (err) {
       console.log(err);
+      alert("Login failed: " + (err.response?.data?.message || "Unknown error"));
     }
   };
 
@@ -72,8 +70,9 @@ export function Login() {
             value={formData.username}
             margin="normal"
             type="text"
+            required
             onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
+              setFormData({ ...formData, username: e.target.value.trim() })
             }
           />
           <TextField
@@ -84,14 +83,14 @@ export function Login() {
             value={formData.password}
             margin="normal"
             type="password"
+            required
             onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
+              setFormData({ ...formData, password: e.target.value.trim() })
             }
           />
           <Button
             variant="contained"
-            color="warning"
-            sx={{ mt: 2, mb: 2, width: "50%" }}
+            sx={{ mt: 2, mb: 2, width: "50%", backgroundColor: "#f56320" }}
             type="submit"
           >
             Login
@@ -106,19 +105,6 @@ export function Login() {
             </Typography>
           </Stack>
         </Paper>
-
-        <Typography variant="body2" mt={2} color="textSecondary">
-          OR
-        </Typography>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<GoogleIcon />}
-          className="google-button"
-          onClick={handleGoogleSignIn}
-        >
-          Continue with Google
-        </Button>
       </form>
     </>
   );
